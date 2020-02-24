@@ -9,7 +9,7 @@ from casbin.client import Client
 
 
 class UserForm(forms.ModelForm):
-    company = forms.ChoiceField(required=False, choices=Company.objects.all().values_list())
+    company = forms.ModelChoiceField(queryset=Company.objects.all(), empty_label="")
 
     class Meta:
         model = User
@@ -17,7 +17,7 @@ class UserForm(forms.ModelForm):
 
 
 class ArticleForm(forms.ModelForm):
-    user = forms.ChoiceField(required=False, choices=User.objects.all().values_list('id','first_name'))
+    user = forms.ModelChoiceField(required=False,queryset=User.objects.all(), empty_label="")
 
     class Meta:
         model = Article
@@ -34,9 +34,10 @@ class UserAdmin(UserAdmin):
 
     def save_model(self, request, obj, form, change):
         super(UserAdmin, self).save_model(request, obj, form, change)
-        subject = obj.first_name
-        domain = dict(form.fields['company'].choices)[int(form.data['company'])]
-        Client.AddGroupingPolicy(subject, 'member', domain)
+        if form.fields.get('company'):
+            subject = obj.first_name
+            domain = dict(form.fields['company'].choices)[int(form.data['company'])]
+            Client.AddGroupingPolicy(subject, 'member', domain)
 
 
 @admin.register(Article)
@@ -62,7 +63,9 @@ class ArticleAdmin(admin.ModelAdmin):
         if extra_field:
             user = User.objects.filter(id=extra_field)
             if user:
-                Client.AddPolicy(user[0].first_name, domain, o, action)
+                subject = user[0].first_name
+                Client.AddPolicy(subject, domain, o, action)
+                Client.AddPolicy(subject, domain, o, 'GET')
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

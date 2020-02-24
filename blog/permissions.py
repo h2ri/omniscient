@@ -7,8 +7,8 @@ class PermissionsMixin(PermissionRequiredMixin):
         subject = self.request.user.first_name
         domain = self.get_object().company.name
         action = self.request.method
+        obj = 'article_' + str(self.get_object().id)
         if action == 'GET':
-            obj = 'articles'
-        else:
-            obj = 'article_' + str(self.get_object().id)
-        return Client.CheckPermissions(subject, domain, obj, action)
+            obj1 = 'articles'
+            
+        return Client.CheckPermissions(subject, domain, obj, action) or Client.CheckPermissions(subject, domain, obj1, action)
