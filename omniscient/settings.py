@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CASBIN_SERVER_IP = os.environ['CASBIN_SERVER_IP']
 
 # Application definition
 

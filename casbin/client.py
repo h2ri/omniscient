@@ -15,11 +15,11 @@ import logging
 import grpc
 from casbin import casbin_pb2, casbin_pb2_grpc
 import os
-from omniscient.settings import BASE_DIR
+from omniscient.settings import BASE_DIR, CASBIN_SERVER_IP
 file_path = os.path.join(BASE_DIR, "casbin/model.conf")
 
 class Client:
-    ADDRESS = "localhost:50051"
+    ADDRESS = f'{CASBIN_SERVER_IP}:50051'
 
     def NewClient(self, address=""):
     	print("NewClient called")

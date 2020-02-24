@@ -8,3 +8,5 @@ COPY . /code/
 
 ENTRYPOINT ["python", "manage.py"]
 CMD ["runserver", "0.0.0.0:8800"]
+
+EXPOSE 8800
