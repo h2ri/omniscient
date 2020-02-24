@@ -1,0 +1,28 @@
+{% extends 'base_generic.html' %}
+{% block content %}
+{#    {% for article in latest_articles %}#}
+{#        <div>#}
+{#            <p>title: {{ article.title }}</p>#}
+{#            <a class="btn btn-default" href="{% url 'article-update' pk=article.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>#}
+{#            <a class="btn btn-default" href="{% url 'article-detail' pk=article.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>#}
+{#        </div>#}
+{#    {% endfor %}#}
+    <div class="container">
+    <div class="row">
+        <!-- Blog Entries Column -->
+        <div class="col-md-8 mt-3 left">
+            {% for article in latest_articles %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">{{ article.title }}</h2>
+                    <p class="card-text text-muted h6">{{ article.author }} | {{ article.created_on}} </p>
+                    <p class="card-text">{{article.content|slice:":200" }}</p>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
