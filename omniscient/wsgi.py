@@ -1,5 +1,5 @@
 """
-WSGI config for asteria project.
+WSGI config for omniscient project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
