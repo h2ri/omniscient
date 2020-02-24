@@ -34,8 +34,8 @@ CASBIN_SERVER_IP = os.environ['CASBIN_SERVER_IP']
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'blog.apps.BlogConfig',
-    'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -127,3 +127,4 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

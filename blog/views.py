@@ -2,19 +2,9 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 from .models import Article
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from .permissions import PermissionsMixin
 from casbin.client import Client
 
-class PermissionsMixin(PermissionRequiredMixin):
-    def has_permission(self, **kwargs):
-        subject = self.request.user.first_name
-        domain = self.get_object().company.name
-        action = self.request.method
-        if action == 'GET':
-            obj = 'articles'
-        else:
-            obj = 'article_' + str(self.get_object().id)
-        return Client.CheckPermissions(subject, domain, obj, action)
 
 class HomePageView(LoginRequiredMixin, ListView):
     model = Article
