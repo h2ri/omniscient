@@ -4,35 +4,12 @@ from django.db import models
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-import pdb
+from lib.casbin.client import Client
 
 
 
 class UserForm(forms.ModelForm):
-    extra_field = forms.CharField(required=False)
-
-    def processData(self, input):
-        # example of error handling
-        if False:
-            raise forms.ValidationError('Processing failed!')
-
-        return input + " has been processed"
-
-    def save(self, commit=True):
-        extra_field = self.cleaned_data.get('extra_field', None)
-        print(extra_field)
-        # self.description = "my result" note that this does not work
-
-        # Get the form instance so I can write to its fields
-        instance = super(User, self).save(commit=commit)
-
-        # this writes the processed data to the description field
-        #instance.description = self.processData(extra_field)
-
-        if commit:
-            instance.save()
-
-        return instance
+    company = forms.ChoiceField(required=False, choices=Company.objects.all().values_list())
 
     class Meta:
         model = User
@@ -40,67 +17,53 @@ class UserForm(forms.ModelForm):
 
 
 class ArticleForm(forms.ModelForm):
-    extra_field = forms.CharField(required=False)
-
-    def clean_extra_field(self):
-        #TODO set permission
-        print("asd")
-
-    def processData(self, input):
-        print("asd")
-        # example of error handling
-        if False:
-            raise forms.ValidationError('Processing failed!')
-
-        return input + " has been processed"
-
-    # def save(self, commit=False):
-    #
-    #     self.save()
-    # def save(self, commit=True):
-    #     #extra_field = self.cleaned_data.get('extra_field', None)
-    #     # self.description = "my result" note that this does not work
-    #
-    #     # Get the form instance so I can write to its fields
-    #     instance = super(Article, self).save(commit=commit)
-    #
-    #     # this writes the processed data to the description field
-    #     #instance.description = self.processData(extra_field)
-    #
-    #     if commit:
-    #         instance.save()
-    #
-    #     return instance
+    user = forms.ChoiceField(required=False, choices=User.objects.all().values_list('id','first_name'))
 
     class Meta:
         model = Article
         fields = "__all__"
 
-# class UserAdmin(UserAdmin):
-#     form = UserForm
-#
-#     fieldsets = (
-#         (None, {
-#             'fields': ('extra_field',),
-#         }),
-#     )
+class UserAdmin(UserAdmin):
+    form = UserForm
+
+    fieldsets = (
+        (None, {
+            'fields': ('username', 'first_name', 'last_name', 'email', 'company',),
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super(UserAdmin, self).save_model(request, obj, form, change)
+        subject = obj.first_name
+        domain = dict(form.fields['company'].choices)[int(form.data['company'])]
+        Client.AddGroupingPolicy(subject, 'member', domain)
+
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleForm
-    #list_display = ('company', 'author', 'title', 'slug', 'content', 'admin_list')
     fieldsets = (
         (None, {
             'fields': ('company', 'author', 'title', 'slug', 'content')
         }),
-        ('Advanced options', {
-            'classes': ('collapse',),
-            'fields': ('extra_field',),
+        ('User Access', {
+            'fields': ('user',),
         }),
     )
 
+    def save_model(self, request, obj, form, change):
+        super(ArticleAdmin, self).save_model(request, obj, form, change)
+        subject = form.cleaned_data['author'].first_name
+        domain = form.cleaned_data['company'].name
+        action = 'POST'
+        o = f'article_{obj.id}'
+        Client.AddPolicy(subject, domain, o, action)
+        extra_field = form.data['user']
+        if extra_field:
+            user = User.objects.filter(id=extra_field)
+            if user:
+                Client.AddPolicy(user[0].first_name, domain, o, action)
 
-# admin.site.unregister(User)
-# admin.site.register(User, UserAdmin)
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 admin.site.register(Company)
-# admin.site.register(ArticleAdmin)

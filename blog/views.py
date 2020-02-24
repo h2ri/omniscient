@@ -2,7 +2,19 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 from .models import Article
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from lib.casbin.client import Client
 
+class PermissionsMixin(PermissionRequiredMixin):
+    def has_permission(self, **kwargs):
+        subject = self.request.user.first_name
+        domain = self.get_object().company.name
+        action = self.request.method
+        if action == 'GET':
+            obj = 'articles'
+        else:
+            obj = 'article_' + str(self.get_object().id)
+        return Client.CheckPermissions(subject, domain, obj, action)
 
 class HomePageView(LoginRequiredMixin, ListView):
     model = Article
@@ -16,7 +28,6 @@ class HomePageView(LoginRequiredMixin, ListView):
 
 
 class ArticleListView(LoginRequiredMixin, ListView):
-
     model = Article
 
     def get_context_data(self, **kwargs):
@@ -25,21 +36,25 @@ class ArticleListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ArticleDetailView(LoginRequiredMixin, DetailView):
+class ArticleDetailView(PermissionsMixin, LoginRequiredMixin, DetailView):
     model = Article
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subject = self.request.user.first_name
+        domain = self.get_object().company.name
+        obj = 'article_' + str(self.get_object().id)
+        action = 'POST'
+        context['can_edit'] = Client.CheckPermissions(subject, domain, obj, action)
+        return context
 
-class ArticleUpdateView(LoginRequiredMixin, UpdateView):
+
+class ArticleUpdateView(PermissionsMixin, LoginRequiredMixin, UpdateView):
     model = Article
-    fields = ['title']
+    fields = ['title', 'content']
 
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
-    fields = ['title']
+    fields = ['title', 'content']
     template_name_suffix = '_update_form'
-
-
-# def article_detail_view(request, primary_key):
-#     book = get_object_or_404(Book, pk=primary_key)
-#     return render(request, 'catalog/book_detail.html', context={'book': book})

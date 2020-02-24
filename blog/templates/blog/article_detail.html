@@ -3,10 +3,12 @@
 {% block content %}
   <h1>Title: {{ article.title }}</h1>
 
-  <p><strong>Author:</strong> <a href="">{{ article.author }}</a></p> <!-- author detail link not yet defined -->
+  <p><strong>Author:</strong> {{ article.author }} </p> <!-- author detail link not yet defined -->
   <p><strong>Title:</strong> {{ article.title }}</p>
-  <p><strong>slug:</strong> {{ article.slug }}</p>
+  <p><strong>Slug:</strong> {{ article.slug }}</p>
   <p><strong>Content:</strong> {{ article.content}}</p>
-  <a class="btn btn-default" href="{% url 'article-update' pk=article.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+  {% if can_edit %}
+  	<a class="btn btn-default" href="{% url 'article-update' pk=article.pk %}"><span class="glyphicon glyphicon-pencil">Edit</span></a>
+  {% endif %}
 
 {% endblock %}
