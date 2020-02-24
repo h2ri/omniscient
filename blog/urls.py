@@ -3,8 +3,8 @@ from .views import HomePageView, ArticleListView, ArticleDetailView, ArticleCrea
 
 urlpatterns = [
     #path('', HomePageView.as_view(), name='home'),
-    path('article/<int:pk>', ArticleDetailView.as_view(), name='article-detail'),
+    path('articles/<int:pk>', ArticleDetailView.as_view(), name='article-detail'),
     path('', ArticleListView.as_view(), name='article'),
-    path('article/new/', ArticleCreateView.as_view(), name='article-new'),
-    path('article/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article-update'),
+    path('articles/new/', ArticleCreateView.as_view(), name='article-new'),
+    path('articles/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article-update'),
 ]
