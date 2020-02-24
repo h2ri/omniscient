@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from .models import Article
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from lib.casbin.client import Client
+from casbin.client import Client
 
 class PermissionsMixin(PermissionRequiredMixin):
     def has_permission(self, **kwargs):

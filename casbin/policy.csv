@@ -1,0 +1,12 @@
+p, admin, google, articles, read
+p, admin, google, articles, write
+p, member, google, articles, read
+g, alice, admin, google
+
+p, admin, microsoft, articles, read
+p, admin, microsoft, articles, write
+p, member, microsoft, articles, read
+g, alice, admin, microsoft
+
+g, charlie, member, google
+g, dave, member, microsoft

@@ -4,7 +4,7 @@ from django.db import models
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from lib.casbin.client import Client
+from casbin.client import Client
 
 
 
