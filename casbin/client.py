@@ -25,7 +25,7 @@ class Client:
     	print("NewClient called")
     	channel = grpc.insecure_channel(address or self.ADDRESS)
     	stub = casbin_pb2_grpc.CasbinStub(channel)
-    	adapter = stub.NewAdapter(casbin_pb2.NewAdapterRequest(driverName="file", connectString="/config/policy.csv"))
+    	adapter = stub.NewAdapter(casbin_pb2.NewAdapterRequest())
     	with open(file_path, 'r') as file:
     		data = file.read()
     	enforcer = stub.NewEnforcer(casbin_pb2.NewEnforcerRequest(modelText=data, adapterHandle= adapter.handler))
