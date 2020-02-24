@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from lib.casbin.client import Client
+from casbin.client import Client
 
 class Company(models.Model):
     name = models.CharField(max_length=100)
