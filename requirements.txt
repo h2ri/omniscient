@@ -1,6 +1,6 @@
 asgiref==3.2.3
 casbin==0.8.4
-Django==3.0.1
+Django==3.1.12
 grpcio==1.27.2
 grpcio-tools==1.27.2
 protobuf==3.11.3
