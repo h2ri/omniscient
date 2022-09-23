@@ -3,7 +3,7 @@ casbin==0.8.4
 Django==3.0.1
 grpcio==1.27.2
 grpcio-tools==1.27.2
-protobuf==3.11.3
+protobuf==3.18.3
 pytz==2019.3
 simpleeval==0.9.10
 six==1.14.0
